@@ -1,0 +1,40 @@
+#MainWindow {
+  background-color: #1e1e1e;
+}
+
+QPushButton {
+  border-style: outset;
+  border-width: 2px;
+  border-radius: 10px;
+  font: bold 14px;
+  min-width: 10em;
+  padding: 6px;
+}
+QPushButton:pressed {
+  border-style: inset;
+}
+
+QPushButton#startButton {
+  background-color: #80c342;
+  border-color: #328930;
+}
+QPushButton#startButton:pressed {
+  background-color: #328930;
+}
+QPushButton#startButton:disabled {
+  background-color: #aeadac;
+  border-color: #868482;
+}
+
+QPushButton#resetButton {
+  background-color: red;
+  border-color: #8b0000;
+  color: #f0f0f0;
+}
+QPushButton#resetButton:pressed {
+  background-color: #8b0000;
+}
+QLCDNumber#timeLCD {
+  color: #f0f0f0;
+  border: none;
+}

@@ -25,7 +25,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.timeSet = WORK_MIN * 60
         self.countdownSec = self.timeSet
         self._setDefaults()
-        
+
 
     def startTimer(self):
         self.startWork()

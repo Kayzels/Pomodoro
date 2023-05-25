@@ -10,6 +10,48 @@ QPushButton {
   min-width: 10em;
   padding: 6px;
 }
+
+QPushButton#increaseButton,
+QPushButton#decreaseButton {
+  width: 2em;
+  height: 2em;
+  background-color: #1e1e1e;
+  border-color: #494949;
+  color: #494949;
+  min-width: 0;
+}
+
+QPushButton#increaseButton:hover,
+QPushButton#decreaseButton:hover {
+  background-color: #494949;
+  color: #6a6a6a;
+}
+
+QPushButton#increaseButton:pressed,
+QPushButton#decreaseButton:pressed {
+  background-color: #494949;
+  border-color: #6a6a6a;
+  color: #6a6a6a;
+}
+
+QPushButton#increaseButton:focus,
+QPushButton#decreaseButton:focus {
+  outline: none;
+}
+
+QPushButton#increaseButton[highlighted="true"],
+QPushButton#decreaseButton[highlighted="true"] {
+  background-color: #494949;
+  border-color: #6a6a6a;
+  color: #6a6a6a;
+}
+
+QPushButton#increaseButton[highlighted="true"]:hover,
+QPushButton#decreaseButton[highlighted="true"]:hover {
+  background-color: #494949;
+  color: #6a6a6a;
+}
+
 QPushButton:pressed {
   border-style: inset;
 }
@@ -18,9 +60,11 @@ QPushButton#startButton {
   background-color: #80c342;
   border-color: #328930;
 }
+
 QPushButton#startButton:pressed {
   background-color: #328930;
 }
+
 QPushButton#startButton:disabled {
   background-color: #aeadac;
   border-color: #868482;
@@ -31,10 +75,13 @@ QPushButton#resetButton {
   border-color: #8b0000;
   color: #f0f0f0;
 }
+
 QPushButton#resetButton:pressed {
   background-color: #8b0000;
 }
+
 QLCDNumber#timeLCD {
   color: #f0f0f0;
   border: none;
+  font-size: 1.5em;
 }

@@ -5,14 +5,7 @@ from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QMainWindow, QApplication
 from mainWindow import Ui_MainWindow
-
-# Constants
-APP_NAME = "Pomo!"
-APP_ID = "pomodoro.v2"
-WORK_MIN = 30
-SHORT_BREAK_MIN = 5
-LONG_BREAK_MIN = 30
-LONG_BREAK_INTERVAL = 4
+from constants import *
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
@@ -21,10 +14,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.startButton.clicked.connect(self.startTimer)
         self.resetButton.clicked.connect(self.resetTimer)
         self.workTimer = QTimer()
-        self.workTimer.setInterval(1000) # 1 second
+        self.workTimer.setInterval(1000)
         self.workTimer.timeout.connect(self.updateWork)
         self.breakTimer = QTimer()
-        self.breakTimer.setInterval(1000) # 1 second
+        self.breakTimer.setInterval(1000)
         self.breakTimer.timeout.connect(self.updateBreak)
         self._setDefaults()
 
@@ -41,6 +34,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.timeLCD.display(f"{WORK_MIN:02d}:00")
         self.workSessions += 1
         self.timeRemainingSec = WORK_MIN * 60
+        self.countdownSec = WORK_MIN * 60
         self.workTimer.start()
 
     def updateWork(self):
@@ -62,6 +56,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.modeLabel.setStyleSheet(f"color: {color}")
         self.timeLCD.display(f"{duration:02d}:00")
         self.timeRemainingSec = duration * 60
+        self.countdownSec = duration * 60
         self.breakTimer.start()
 
     def updateBreak(self):
@@ -72,7 +67,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def updateTimeDisplay(self):
         self.timeRemainingSec -= 1
-        mins, secs = divmod(self.timeRemainingSec, 60)
+        self.countdownSec -= 1
+        mins, secs = divmod(self.countdownSec, 60)
         mins = f"{mins:02d}"
         secs = f"{secs:02d}"
         remainingText = mins + ":" + secs

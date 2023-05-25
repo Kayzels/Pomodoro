@@ -89,7 +89,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.modeLabel.setStyleSheet("color: #f0f0f0")
         self.workTimer.stop()
         self.breakTimer.stop()
-        self.timeLCD.display("30:00")
+        mins = f"{WORK_MIN:02d}"
+        secs = f"{0:02d}"
+        remainingText = mins + ":" + secs
+        self.timeLCD.display(remainingText)
 
 def secToMinSec(seconds: int) -> tuple[int, int]:
     mins = seconds // 60

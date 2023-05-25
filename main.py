@@ -13,16 +13,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.startButton.clicked.connect(self.startTimer)
         self.resetButton.clicked.connect(self.resetTimer)
-        self.increaseButton.clicked.connect(self.increaseTime)  # Connect increaseButton
+        self.increaseButton.clicked.connect(self.increaseTime)
+        self.decreaseButton.clicked.connect(self.decreaseTime)  # Connect decreaseButton
         self.workTimer = QTimer()
         self.workTimer.setInterval(1000)
         self.workTimer.timeout.connect(self.updateWork)
         self.breakTimer = QTimer()
         self.breakTimer.setInterval(1000)
         self.breakTimer.timeout.connect(self.updateBreak)
-        self.countdownStopped = True  # Initialize countdownStopped as True
+        self.countdownStopped = True
         self.timeSet = WORK_MIN * 60
-        self.countdownSec = self.timeSet  # Reset countdownSec to initial work duration
+        self.countdownSec = self.timeSet
         self._setDefaults()
         
 
@@ -83,9 +84,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         remainingText = mins + ":" + secs
         self.timeLCD.display(remainingText)
 
+    def decreaseTime(self):
+        if self.countdownStopped:
+            self.timeSet -= 60  # Decrease time by a minute
+            if self.timeSet < 60:  # Check if timeSet is less than 1 minute
+                self.timeSet = 60  # Set timeSet to 1 minute
+            mins, secs = divmod(self.timeSet, 60)
+            self.countdownSec = self.timeSet
+            self.timeLCD.display(f"{mins:02d}:{secs:02d}")  # Update time display
+
     def increaseTime(self):
-        if self.countdownStopped:  # Increase time only when countdown is stopped
+        if self.countdownStopped:
             self.timeSet += 60  # Increase time by a minute
+            if self.timeSet > 120 * 60:  # Check if timeSet exceeds 120 minutes
+                self.timeSet = 120 * 60  # Set timeSet to 120 minutes
             mins, secs = divmod(self.timeSet, 60)
             self.countdownSec = self.timeSet
             self.timeLCD.display(f"{mins:02d}:{secs:02d}")  # Update time display

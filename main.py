@@ -13,28 +13,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.startButton.clicked.connect(self.startTimer)
         self.resetButton.clicked.connect(self.resetTimer)
+        self.increaseButton.clicked.connect(self.increaseTime)  # Connect increaseButton
         self.workTimer = QTimer()
         self.workTimer.setInterval(1000)
         self.workTimer.timeout.connect(self.updateWork)
         self.breakTimer = QTimer()
         self.breakTimer.setInterval(1000)
         self.breakTimer.timeout.connect(self.updateBreak)
+        self.countdownStopped = True  # Initialize countdownStopped as True
+        self.timeSet = WORK_MIN * 60
+        self.countdownSec = self.timeSet  # Reset countdownSec to initial work duration
         self._setDefaults()
+        
 
     def startTimer(self):
         self.startWork()
         self.startButton.setEnabled(False)
+        self.countdownStopped = False  # Countdown started, set countdownStopped to False
 
     def resetTimer(self):
         self._setDefaults()
+        mins, secs = divmod(self.timeSet, 60)
+        self.timeLCD.display(f"{mins:02d}:{secs:02d}")
 
     def startWork(self):
         self.modeLabel.setText("Work")
         self.modeLabel.setStyleSheet("color: red")
-        self.timeLCD.display(f"{WORK_MIN:02d}:00")
+        self.timeRemainingSec = self.countdownSec  # Use the selected time as the starting time
+        mins, secs = divmod(self.timeRemainingSec, 60)
+        remainingText = f"{mins:02d}:{secs:02d}"
+        self.timeLCD.display(remainingText)
         self.workSessions += 1
-        self.timeRemainingSec = WORK_MIN * 60
-        self.countdownSec = WORK_MIN * 60
         self.workTimer.start()
 
     def updateWork(self):
@@ -66,13 +75,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.startWork()
 
     def updateTimeDisplay(self):
-        self.timeRemainingSec -= 1
-        self.countdownSec -= 1
-        mins, secs = divmod(self.countdownSec, 60)
+        if not self.countdownStopped:  # Only update time if countdown is not stopped
+            self.timeRemainingSec -= 1
+        mins, secs = divmod(self.timeRemainingSec, 60)
         mins = f"{mins:02d}"
         secs = f"{secs:02d}"
         remainingText = mins + ":" + secs
         self.timeLCD.display(remainingText)
+
+    def increaseTime(self):
+        if self.countdownStopped:  # Increase time only when countdown is stopped
+            self.timeSet += 60  # Increase time by a minute
+            mins, secs = divmod(self.timeSet, 60)
+            self.countdownSec = self.timeSet
+            self.timeLCD.display(f"{mins:02d}:{secs:02d}")  # Update time display
 
     def _setDefaults(self):
         self.workSessions = 0
@@ -87,6 +103,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         secs = f"{0:02d}"
         remainingText = mins + ":" + secs
         self.timeLCD.display(remainingText)
+        self.countdownStopped = True  # Set countdownStopped to True on reset
+        self.countdownSec = WORK_MIN * 60  # Reset countdownSec to initial work duration
 
 def run():
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_ID)

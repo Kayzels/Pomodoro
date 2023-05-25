@@ -6,9 +6,9 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QMainWindow, QApplication
 from mainWindow import Ui_MainWindow
 
-# constants
+# Constants
 APP_NAME = "Pomo!"
-APP_ID = "pomodoro.v1"
+APP_ID = "pomodoro.v2"
 WORK_MIN = 30
 SHORT_BREAK_MIN = 5
 LONG_BREAK_MIN = 30
@@ -16,18 +16,16 @@ LONG_BREAK_INTERVAL = 4
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.setupUi(self)
         self.startButton.clicked.connect(self.startTimer)
         self.resetButton.clicked.connect(self.resetTimer)
-
         self.workTimer = QTimer()
         self.workTimer.setInterval(1000) # 1 second
         self.workTimer.timeout.connect(self.updateWork)
         self.breakTimer = QTimer()
         self.breakTimer.setInterval(1000) # 1 second
         self.breakTimer.timeout.connect(self.updateBreak)
-
         self._setDefaults()
 
     def startTimer(self):
@@ -54,14 +52,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.startBreak()
 
     def startBreak(self):
-        if (self.workSessions % LONG_BREAK_INTERVAL == 0):
-            self.modeLabel.setText("Long Break")
-            duration = LONG_BREAK_MIN
-            self.modeLabel.setStyleSheet("color: #80c342")
-        else:
-            self.modeLabel.setText("Short Break")
-            duration = SHORT_BREAK_MIN
-            self.modeLabel.setStyleSheet("color: #53baff")
+        break_type = self.workSessions % LONG_BREAK_INTERVAL
+        break_info = {
+            0: ("Long Break", LONG_BREAK_MIN, "#80c342"),
+            1: ("Short Break", SHORT_BREAK_MIN, "#53baff")
+        }
+        label, duration, color = break_info.get(break_type, ("Unknown", 0, "#000000"))
+        self.modeLabel.setText(label)
+        self.modeLabel.setStyleSheet(f"color: {color}")
         self.timeLCD.display(f"{duration:02d}:00")
         self.timeRemainingSec = duration * 60
         self.breakTimer.start()
@@ -74,7 +72,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def updateTimeDisplay(self):
         self.timeRemainingSec -= 1
-        mins, secs = secToMinSec(self.timeRemainingSec)
+        mins, secs = divmod(self.timeRemainingSec, 60)
         mins = f"{mins:02d}"
         secs = f"{secs:02d}"
         remainingText = mins + ":" + secs
@@ -94,11 +92,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         remainingText = mins + ":" + secs
         self.timeLCD.display(remainingText)
 
-def secToMinSec(seconds: int) -> tuple[int, int]:
-    mins = seconds // 60
-    seconds = seconds - (mins * 60)
-    return (mins, seconds)
-
 def run():
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_ID)
     app = QApplication(sys.argv)
@@ -107,7 +100,7 @@ def run():
     app.setStyleSheet(Path('styles.qss').read_text())
     window = MainWindow()
     window.show()
-    app.exec()
+    sys.exit(app.exec())
 
 if __name__ == "__main__":
-    sys.exit(run())
+    run()

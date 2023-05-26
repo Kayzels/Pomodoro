@@ -32,6 +32,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def startTimer(self):
         # Start the work timer
         self.startWork()
+        # Countdown started, set countdownStopped to False
         # Disable the start button and hide increase/decrease buttons
         self.startButton.setEnabled(False)
         self.countdownStopped = False
@@ -51,6 +52,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Set up the UI for work mode
         self.modeLabel.setText("Work")
         self.modeLabel.setStyleSheet("color: red")
+        # Use the selected time as the starting time
         self.timeRemainingSec = self.countdownSec
         mins, secs = divmod(self.timeRemainingSec, 60)
         remainingText = f"{mins:02d}:{secs:02d}"
@@ -101,7 +103,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.timeLCD.display(remainingText)
 
     def decreaseTime(self):
-        # Decrease the timer duration by 1 minute (minimum 1 minute)
+        # Decrease the timer duration by 1 minute (minimum 1 min)
         if self.countdownStopped:
             self.timeSet -= 60
             if self.timeSet < 60:
@@ -111,7 +113,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.timeLCD.display(f"{mins:02d}:{secs:02d}")
 
     def increaseTime(self):
-        # Increase the timer duration by 1 minute (maximum 120 minutes)
+        # Increase the timer duration by 1 minute (max 120 min)
         if self.countdownStopped:
             self.timeSet += 60
             if self.timeSet > 120 * 60:
@@ -134,6 +136,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         secs = f"{0:02d}"
         remainingText = mins + ":" + secs
         self.timeLCD.display(remainingText)
+        # Set countdownStopped to True on reset
+        # Reset countdownSec to initial work duration
         self.countdownStopped = True
         self.countdownSec = WORK_MIN * 60
 

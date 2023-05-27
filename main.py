@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 import ctypes
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import QTimer, QCoreApplication
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QMainWindow, QApplication
 from mainWindow import Ui_MainWindow
@@ -15,8 +15,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Connect button signals to their respective functions
         self.startButton.clicked.connect(self.startTimer)
         self.resetButton.clicked.connect(self.resetTimer)
-        self.increaseButton.clicked.connect(self.increaseTime)
-        self.decreaseButton.clicked.connect(self.decreaseTime)
+        self.increaseButton.pressed.connect(self.startIncrease)
+        self.increaseButton.released.connect(self.stopIncrease)
+        self.decreaseButton.pressed.connect(self.startDecrease)
+        self.decreaseButton.released.connect(self.stopDecrease)
 
         # Set up timers for work and break intervals
         # Set up variables
@@ -30,6 +32,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.timeSet = WORK_MIN * 60
         self.countdownSec = self.timeSet
         self._setDefaults()
+        self.increasePressed = False
+        self.decreasePressed = False
 
     def startTimer(self):
         # Start the work timer
@@ -126,6 +130,44 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             mins, secs = divmod(self.timeSet, 60)
             self.countdownSec = self.timeSet
             self.timeLCD.display(f"{mins:02d}:{secs:02d}")
+
+    def startIncrease(self):
+        # Start continuously increasing the timer duration
+        self.increasePressed = True
+        self.increaseTime()
+        self.increaseTimer = QTimer()
+        self.increaseTimer.setInterval(200)  # Increase every 200 milliseconds
+        self.increaseTimer.timeout.connect(self.continuousIncrease)
+        self.increaseTimer.start()
+
+    def stopIncrease(self):
+        # Stop continuously increasing the timer duration
+        self.increasePressed = False
+        self.increaseTimer.stop()
+
+    def continuousIncrease(self):
+        # Continuously increase the timer duration while the increase button is held down
+        if self.increasePressed:
+            self.increaseTime()
+
+    def startDecrease(self):
+        # Start continuously decreasing the timer duration
+        self.decreasePressed = True
+        self.decreaseTime()
+        self.decreaseTimer = QTimer()
+        self.decreaseTimer.setInterval(200)  # Decrease every 200 milliseconds
+        self.decreaseTimer.timeout.connect(self.continuousDecrease)
+        self.decreaseTimer.start()
+
+    def stopDecrease(self):
+        # Stop continuously decreasing the timer duration
+        self.decreasePressed = False
+        self.decreaseTimer.stop()
+
+    def continuousDecrease(self):
+        # Continuously decrease the timer duration while the decrease button is held down
+        if self.decreasePressed:
+            self.decreaseTime()
 
     def _setDefaults(self):
         # Reset all variables and UI elements to their default values

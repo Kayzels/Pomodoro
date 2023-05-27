@@ -11,19 +11,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setupUi(self)
+
         # Connect button signals to their respective functions
         self.startButton.clicked.connect(self.startTimer)
         self.resetButton.clicked.connect(self.resetTimer)
         self.increaseButton.clicked.connect(self.increaseTime)
         self.decreaseButton.clicked.connect(self.decreaseTime)
+
         # Set up timers for work and break intervals
+        # Set up variables
         self.workTimer = QTimer()
         self.workTimer.setInterval(1000)  # 1 second
         self.workTimer.timeout.connect(self.updateWork)
         self.breakTimer = QTimer()
         self.breakTimer.setInterval(1000)  # 1 second
         self.breakTimer.timeout.connect(self.updateBreak)
-        # Initialize variables and set default values
         self.countdownStopped = True
         self.timeSet = WORK_MIN * 60
         self.countdownSec = self.timeSet

@@ -119,9 +119,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.timeLCD.display(f"{mins:02d}:{secs:02d}")
 
     def increaseTime(self):
-        # Increase the timer duration by 1 minute (max 120 min)
+        # Increase the timer duration by 1 minute (max 90 min)
         if self.countdownStopped:
-            self.timeSet = min(self.timeSet + 60, 120 * 60)
+            self.timeSet = min(self.timeSet + 60, 90 * 60)
             mins, secs = divmod(self.timeSet, 60)
             self.countdownSec = self.timeSet
             self.timeLCD.display(f"{mins:02d}:{secs:02d}")

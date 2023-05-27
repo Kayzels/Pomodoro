@@ -74,11 +74,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def startBreak(self):
         # Determine the type of break (long or short) based on work session count
         break_type = self.workSessions % LONG_BREAK_INTERVAL
-        break_info = {
-            0: ("Long Break", LONG_BREAK_MIN, "#80c342"),
-            1: ("Short Break", SHORT_BREAK_MIN, "#53baff")
-        }
-        label, duration, color = break_info.get(break_type, ("Unknown", 0, "#000000"))
+        if break_type == 0:
+            label = "Long Break"
+            duration = LONG_BREAK_MIN
+            color = "#80c342"
+        else:
+            label = "Short Break"
+            duration = SHORT_BREAK_MIN
+            color = "#53baff"
         # Set up the UI for break mode
         self.modeLabel.setText(label)
         self.modeLabel.setStyleSheet(f"color: {color}")
